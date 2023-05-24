@@ -38,9 +38,10 @@ class IntroTwo extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: 8, left: 20, right: 20),
                     child:
                         Text('Prevent Screen Addition & Preserve Family Time',
+                            textAlign: TextAlign.center,
                             style: GoogleFonts.nunitoSans(
                               textStyle: TextStyle(
                                 color: Color.fromRGBO(228, 228, 240, 1),

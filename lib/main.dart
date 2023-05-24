@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
 // import 'package:eyebaituna_app/Testerscreen.dart';
+// import 'package:eyebaituna_app/Auth_pages/login.dart';
+import 'package:eyebaituna_app/Components/home_page.dart';
+import 'package:eyebaituna_app/Components/user_profile.dart';
 import 'package:flutter/material.dart';
-import 'intro_screen.dart';
+import 'Components/intro_screen.dart';
 import 'package:sizer/sizer.dart';
 
 void main() {
