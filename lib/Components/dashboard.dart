@@ -1,10 +1,16 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print
 
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:sizer/sizer.dart';
+import 'package:http/http.dart' as http;
+import 'package:validators/validators.dart';
+import '../services/api_service.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -14,8 +20,84 @@ class Dashboard extends StatefulWidget {
 }
 
 class _Dashboard extends State<Dashboard> {
+  final TextEditingController _urlController = TextEditingController();
+  bool isBanning = false;
+  bool isValid = false;
+
+  void banURLs() async {
+    String url = _urlController.text.trim();
+
+    if (url.isEmpty) {
+      Fluttertoast.showToast(
+        toastLength: Toast.LENGTH_LONG,
+        timeInSecForIosWeb: 4,
+        msg: "Please enter a website URL",
+      );
+
+      return;
+    }
+
+    try {
+      final res = await http.post(
+        Uri.parse(ApiService.banURLS),
+        body: {
+          'url': url,
+        },
+      );
+
+      if (res.statusCode == 200) {
+        final resBodyOfRegistered = jsonDecode(res.body);
+        if (resBodyOfRegistered['success']) {
+          Fluttertoast.showToast(
+            toastLength: Toast.LENGTH_LONG,
+            timeInSecForIosWeb: 4,
+            msg: "Website has been blocked successfully!",
+          );
+          setState(() {
+            _urlController.clear();
+            isBanning = true;
+          });
+          Timer(Duration(seconds: 1), () {
+            setState(() {
+              isBanning = false; // Reset isBanning back to false after 1 second
+            });
+          });
+        } else {
+          Fluttertoast.showToast(
+            toastLength: Toast.LENGTH_LONG,
+            timeInSecForIosWeb: 4,
+            msg: "Please try again",
+          );
+        }
+      }
+    } catch (e, stackTrace) {
+      print('Error: $e');
+      print('Stack trace: $stackTrace');
+      Fluttertoast.showToast(msg: "banURL() IS WRONG");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final addCircleIcon = Icon(
+      Iconsax.add_circle,
+      color: Color.fromRGBO(56, 176, 0, 1),
+      size: 35,
+    );
+
+    final checkMarkIcon = Icon(
+      Icons.check,
+      color: Color.fromRGBO(120, 120, 250, 1),
+      size: 35,
+    );
+    final notValidIcon = Icon(
+      Icons.close,
+      color: Color.fromRGBO(186, 24, 27, 1),
+      size: 35,
+    );
+
+    final currentSuffixIcon = isBanning ? checkMarkIcon : addCircleIcon;
+
     return Scaffold(
       body: Stack(children: [
         Container(
@@ -87,6 +169,7 @@ class _Dashboard extends State<Dashboard> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 0),
                               child: TextField(
+                                controller: _urlController,
                                 decoration: InputDecoration(
                                     contentPadding:
                                         EdgeInsets.symmetric(vertical: 20),
@@ -97,10 +180,50 @@ class _Dashboard extends State<Dashboard> {
                                           fontSize: 18,
                                           fontWeight: FontWeight.w300),
                                     ),
-                                    suffixIcon: Icon(
-                                      Iconsax.add_circle,
-                                      size: 35,
+                                    suffixIcon: IconButton(
+                                      icon: AnimatedSwitcher(
+                                        duration: Duration(milliseconds: 1000),
+                                        transitionBuilder: (Widget child,
+                                            Animation<double> animation) {
+                                          final scaleAnimation =
+                                              Tween<double>(begin: 0, end: 1)
+                                                  .animate(CurvedAnimation(
+                                                      parent: animation,
+                                                      curve: Curves.easeInOut));
+
+                                          return ScaleTransition(
+                                            scale: scaleAnimation,
+                                            child: child,
+                                          );
+                                        },
+                                        child: isValid
+                                            ? notValidIcon
+                                            : currentSuffixIcon,
+                                      ),
+                                      iconSize: 35,
                                       color: Color.fromRGBO(56, 176, 0, 1),
+                                      onPressed: () {
+                                        if (!isURL(
+                                            _urlController.text.trim())) {
+                                          Fluttertoast.showToast(
+                                            toastLength: Toast.LENGTH_LONG,
+                                            timeInSecForIosWeb: 4,
+                                            msg: "Please enter a valid URL",
+                                          );
+                                          setState(() {
+                                            isValid = true;
+                                          });
+                                          Timer(Duration(seconds: 1), () {
+                                            setState(() {
+                                              isValid =
+                                                  false; // Reset isBanning back to false after 1 second
+                                            });
+                                          });
+                                          return;
+                                        } else {
+                                          banURLs();
+                                        }
+                                      },
                                     )),
                               ),
                             ),

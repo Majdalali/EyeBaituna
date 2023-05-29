@@ -1,32 +1,33 @@
-// ignore_for_file: prefer_const_constructors, avoid_print
+// ignore_for_file: avoid_print, unused_field, prefer_final_fields
 
 import 'dart:convert';
 import 'dart:ui';
+import 'package:eyebaituna_app/Components/user_profile.dart';
+import 'package:get/get.dart';
 import 'package:eyebaituna_app/services/api_service.dart';
+import 'package:eyebaituna_app/user_preferences/user_preferences.dart';
 import 'package:flutter/material.dart';
+// ignore_for_file: prefer_const_constructors
 import 'package:eyebaituna_app/Auth_pages/login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/user.dart';
+import 'models/user.dart';
 
-class Register extends StatefulWidget {
-  const Register({super.key});
+class Tester extends StatefulWidget {
+  const Tester({super.key});
 
   @override
-  State<Register> createState() => _RegisterScreen();
+  State<Tester> createState() => TesterState();
 }
 
-class _RegisterScreen extends State<Register> {
-  //? To hide password
+class TesterState extends State<Tester> {
   bool _obscureText = false;
   final formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
 
   String _errorMessage = '';
   bool isEmailValid(String? email) {
@@ -36,127 +37,48 @@ class _RegisterScreen extends State<Register> {
   }
 
   bool isAnyFieldEmpty() {
-    return _nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _passwordController.text.isEmpty;
+    return _emailController.text.isEmpty || _passwordController.text.isEmpty;
   }
 
-  bool isPasswordValid(String password) {
-    if (password.length < 8) {
-      return false;
-    }
-
-    // Check for at least one uppercase letter
-    if (!password.contains(RegExp(r'[A-Z]'))) {
-      return false;
-    }
-    // Check for at least one symbol
-    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-      return false;
-    }
-
-    return true;
-  }
-
-  bool isNameValid(String name) {
-    final RegExp nameRegex = RegExp(r'^[a-zA-Z ]+$');
-    return nameRegex.hasMatch(name);
-  }
-
-  validateUserName() {
-    String name = _nameController.text.trim();
-    if (!isNameValid(name)) {
-      Fluttertoast.showToast(
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 4,
-          msg: "Name cannot contain numbers or symbols");
-      return false;
-    }
-    return true;
-  }
-
-  validateUserEmail() async {
-    try {
-      final res = await http.post(Uri.parse(ApiService.validateEmail), body: {
-        'email': _emailController.text.trim(),
-      });
-      if (res.statusCode == 200) {
-        final resBodyToCheckEmail = jsonDecode(res.body);
-        return !resBodyToCheckEmail[
-            'emailFound']; // Return true if email is valid (not found in the database)
-      }
-    } catch (e, stackTrace) {
-      print('Error: $e');
-      print('Stack trace: $stackTrace');
-      Fluttertoast.showToast(
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 4,
-          msg: "validateUserEmail IS WRONG");
-    }
-    return false; // Return false in case of an error or invalid response
-  }
-
-  registerNewUser() async {
+  signInUser() async {
     String email = _emailController.text.trim();
     if (!isEmailValid(email)) {
-      Fluttertoast.showToast(msg: "Please enter a valid email");
-      return;
-    }
-    if (!validateUserName()) {
-      return;
-    }
-    String password = _passwordController.text.trim();
-    if (!isPasswordValid(password)) {
       Fluttertoast.showToast(
           toastLength: Toast.LENGTH_LONG,
           timeInSecForIosWeb: 4,
-          msg:
-              "Password should be at least 8 characters, including numbers, at least one uppercase letter, and at least one symbol");
+          msg: "Please enter a valid email");
       return;
     }
-    User userModel = User(
-      1,
-      _nameController.text.trim(),
-      email,
-      password,
-    );
-
-    bool isValidEmail = await validateUserEmail();
-    if (!isValidEmail) {
-      Fluttertoast.showToast(
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 4,
-          msg: 'Please choose another email');
-      return;
-    }
-
     try {
-      final res = await http.post(Uri.parse(ApiService.signup),
-          body: userModel.toJson());
+      final res = await http.post(Uri.parse(ApiService.login), body: {
+        "email": _emailController.text.trim(),
+        "password": _passwordController.text.trim()
+      });
       if (res.statusCode == 200) {
-        final resBodyOfRegistered = jsonDecode(res.body);
-        if (resBodyOfRegistered['success']) {
+        final resBodyOfLogin = jsonDecode(res.body);
+        if (resBodyOfLogin['success'] == true) {
           Fluttertoast.showToast(
               toastLength: Toast.LENGTH_LONG,
-              timeInSecForIosWeb: 4,
-              msg: "Sign up confirmed");
-          setState(() {
-            _nameController.clear();
-            _emailController.clear();
-            _passwordController.clear();
-          });
-          Get.to(Login());
+              timeInSecForIosWeb: 2,
+              msg: "Sign In confirmed");
+          // ignore: unused_local_variable
+          User userInfo = User.fromJson(resBodyOfLogin["userData"]);
+
+          await RememberUser.saveUserInfo(userInfo);
+
+          await Future.delayed(Duration(seconds: 2));
+          Get.to(UserProfile());
         } else {
           Fluttertoast.showToast(
               toastLength: Toast.LENGTH_LONG,
               timeInSecForIosWeb: 4,
-              msg: "Please try again");
+              msg: "Email or password is incorrect. Please try again!");
         }
       }
     } catch (e, stackTrace) {
       print('Error: $e');
       print('Stack trace: $stackTrace');
-      Fluttertoast.showToast(msg: "registerNewUser IS WRONG");
+      Fluttertoast.showToast(msg: "Sign in method IS WRONG");
     }
   }
 
@@ -204,7 +126,7 @@ class _RegisterScreen extends State<Register> {
                 child: Column(children: [
                   //! Welcome-Text Field
                   Text(
-                    'Welcome!',
+                    'Hello Again!',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.sora(
                       textStyle: TextStyle(
@@ -216,7 +138,7 @@ class _RegisterScreen extends State<Register> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8, right: 80, left: 80),
                     child: Text(
-                      'Please enter your information to get you started',
+                      'Welcome back you’ve been missed!',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.nunitoSans(
                         textStyle: TextStyle(
@@ -227,32 +149,10 @@ class _RegisterScreen extends State<Register> {
                     ),
                   ),
                   SizedBox(height: 25.0),
-                  //! Name Field
                   Form(
                       key: formKey,
                       child: Column(
                         children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 40.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(242, 242, 255, 1),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15.0),
-                                child: TextFormField(
-                                  controller: _nameController,
-                                  decoration: InputDecoration(
-                                      hintText: "Enter Name",
-                                      border: InputBorder.none),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
                           //! Email Field
                           Padding(
                             padding:
@@ -319,7 +219,7 @@ class _RegisterScreen extends State<Register> {
                           //! Register Button
 
                           Container(
-                            width: 80.w,
+                            width: 84.w,
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 gradient: LinearGradient(
@@ -341,11 +241,11 @@ class _RegisterScreen extends State<Register> {
                                           'Please fill in all fields';
                                     });
                                   } else {
-                                    registerNewUser();
+                                    signInUser();
                                   }
                                 },
                                 child: Text(
-                                  "Register",
+                                  "Sign In",
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.nunitoSans(
                                     textStyle: TextStyle(
