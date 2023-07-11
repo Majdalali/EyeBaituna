@@ -15,6 +15,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
 
+import '../user_preferences/in_app_user.dart';
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -43,35 +45,47 @@ class LoginState extends State<Login> {
     String email = _emailController.text.trim();
     if (!isEmailValid(email)) {
       Fluttertoast.showToast(
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 4,
-          msg: "Please enter a valid email");
+        toastLength: Toast.LENGTH_LONG,
+        timeInSecForIosWeb: 4,
+        msg: "Please enter a valid email",
+      );
       return;
     }
+
     try {
       final res = await http.post(Uri.parse(ApiService.login), body: {
         "email": _emailController.text.trim(),
-        "password": _passwordController.text.trim()
+        "password": _passwordController.text.trim(),
       });
+
       if (res.statusCode == 200) {
         final resBodyOfLogin = jsonDecode(res.body);
+
         if (resBodyOfLogin['success'] == true) {
           Fluttertoast.showToast(
-              toastLength: Toast.LENGTH_LONG,
-              timeInSecForIosWeb: 2,
-              msg: "Sign In confirmed");
-          // ignore: unused_local_variable
-          User userInfo = User.fromJson(resBodyOfLogin["userData"]);
+            toastLength: Toast.LENGTH_LONG,
+            timeInSecForIosWeb: 2,
+            msg: "Sign In confirmed",
+          );
 
+          User userInfo = User.fromJson(resBodyOfLogin["userData"]);
           await RememberUser.saveUserInfo(userInfo);
 
-          await Future.delayed(Duration(seconds: 2));
-          Get.to(HomePage());
+          Get.put(InAppUser()); // Register InAppUser controller
+          final inAppUser = Get.find<InAppUser>();
+
+          await inAppUser.getUserInfo(); // Fetch the user information
+
+          // Delay the navigation until after the InAppUser instance is initialized
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Get.offAll(HomePage()); // Navigate to the HomePage
+          });
         } else {
           Fluttertoast.showToast(
-              toastLength: Toast.LENGTH_LONG,
-              timeInSecForIosWeb: 4,
-              msg: "Email or password is incorrect. Please try again!");
+            toastLength: Toast.LENGTH_LONG,
+            timeInSecForIosWeb: 4,
+            msg: "Email or password is incorrect. Please try again!",
+          );
         }
       }
     } catch (e, stackTrace) {

@@ -108,38 +108,44 @@ class _RegisterScreen extends State<Register> {
     String password = _passwordController.text.trim();
     if (!isPasswordValid(password)) {
       Fluttertoast.showToast(
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 4,
-          msg:
-              "Password should be at least 8 characters, including numbers, at least one uppercase letter, and at least one symbol");
+        toastLength: Toast.LENGTH_LONG,
+        timeInSecForIosWeb: 4,
+        msg:
+            "Password should be at least 8 characters, including numbers, at least one uppercase letter, and at least one symbol",
+      );
       return;
     }
     User userModel = User(
-      1,
-      _nameController.text.trim(),
-      email,
-      password,
+      id: 1,
+      username: _nameController.text.trim(),
+      email: email,
+      password: password,
+      pincode: null, // Set pincode to null explicitly
     );
 
     bool isValidEmail = await validateUserEmail();
     if (!isValidEmail) {
       Fluttertoast.showToast(
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 4,
-          msg: 'Please choose another email');
+        toastLength: Toast.LENGTH_LONG,
+        timeInSecForIosWeb: 4,
+        msg: 'Please choose another email',
+      );
       return;
     }
 
     try {
-      final res = await http.post(Uri.parse(ApiService.signup),
-          body: userModel.toJson());
+      final res = await http.post(
+        Uri.parse(ApiService.signup),
+        body: userModel.toJson(),
+      );
       if (res.statusCode == 200) {
         final resBodyOfRegistered = jsonDecode(res.body);
         if (resBodyOfRegistered['success']) {
           Fluttertoast.showToast(
-              toastLength: Toast.LENGTH_LONG,
-              timeInSecForIosWeb: 4,
-              msg: "Sign up confirmed");
+            toastLength: Toast.LENGTH_LONG,
+            timeInSecForIosWeb: 4,
+            msg: "Sign up confirmed",
+          );
           setState(() {
             _nameController.clear();
             _emailController.clear();
@@ -148,9 +154,10 @@ class _RegisterScreen extends State<Register> {
           Get.to(Login());
         } else {
           Fluttertoast.showToast(
-              toastLength: Toast.LENGTH_LONG,
-              timeInSecForIosWeb: 4,
-              msg: "Please try again");
+            toastLength: Toast.LENGTH_LONG,
+            timeInSecForIosWeb: 4,
+            msg: "Please try again",
+          );
         }
       }
     } catch (e, stackTrace) {

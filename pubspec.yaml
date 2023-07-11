@@ -46,6 +46,15 @@ dependencies:
   percent_indicator: ^4.0.1
   omni_datetime_picker: ^1.0.7
   intl: ^0.18.1
+  http: ^1.0.0
+  fluttertoast: ^8.2.2
+  email_validator: ^2.1.17
+  flash: ^3.0.5
+  shared_preferences: ^2.1.1
+  get: ^4.6.5
+  syncfusion_flutter_charts: ^22.1.36
+  pdf: ^3.10.4
+  printing: ^5.11.0
 
 dev_dependencies:
   flutter_test:

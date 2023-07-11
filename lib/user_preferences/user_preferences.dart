@@ -33,15 +33,26 @@ class RememberUser {
     await preferences.remove("currentUser");
   }
 
-  // //! Check if intro screens have been seen
-  // static Future<bool> hasSeenIntroScreens() async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   return preferences.getBool('hasSeenIntroScreens') ?? false;
-  // }
+  //! Check if intro screens have been seen
+  static Future<bool> hasSeenIntroScreens() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getBool('hasSeenIntroScreens') ?? false;
+  }
 
-  // //! Set flag indicating intro screens have been seen
-  // static Future<void> setHasSeenIntroScreens(bool value) async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   await preferences.setBool('hasSeenIntroScreens', value);
-  // }
+  //! Set flag indicating intro screens have been seen
+  static Future<void> setHasSeenIntroScreens(bool value) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setBool('hasSeenIntroScreens', value);
+  }
+
+  //! Get pin code and store it
+  static Future<void> savePinCode(String pinCode) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString('pinCode', pinCode);
+  }
+
+  static Future<String?> readPinCode() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString('pinCode');
+  }
 }

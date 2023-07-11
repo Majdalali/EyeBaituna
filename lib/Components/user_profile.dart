@@ -87,7 +87,7 @@ class _UserProfile extends State<UserProfile> {
                           style: GoogleFonts.sora(
                             textStyle: TextStyle(
                                 color: Color.fromRGBO(242, 242, 250, 1),
-                                fontSize: 18.sp,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.normal),
                           )),
                       //? Signout & Edit
@@ -128,7 +128,7 @@ class _UserProfile extends State<UserProfile> {
                                     Icon(
                                       Iconsax.logout,
                                       color: Color.fromRGBO(242, 242, 250, 1),
-                                      size: 19.sp,
+                                      size: 16.sp,
                                     ),
                                     SizedBox(height: 2.0),
                                     Text('Sign out',
@@ -136,7 +136,7 @@ class _UserProfile extends State<UserProfile> {
                                           textStyle: TextStyle(
                                               color: Color.fromRGBO(
                                                   242, 242, 250, 1),
-                                              fontSize: 13.sp,
+                                              fontSize: 12.sp,
                                               fontWeight: FontWeight.w200),
                                         ))
                                   ],
@@ -157,7 +157,7 @@ class _UserProfile extends State<UserProfile> {
                                     Icon(
                                       Iconsax.user_edit,
                                       color: Color.fromRGBO(242, 242, 250, 1),
-                                      size: 19.sp,
+                                      size: 16.sp,
                                     ),
                                     SizedBox(height: 2.0),
                                     Text('Edit',
@@ -165,7 +165,7 @@ class _UserProfile extends State<UserProfile> {
                                           textStyle: TextStyle(
                                               color: Color.fromRGBO(
                                                   242, 242, 250, 1),
-                                              fontSize: 13.sp,
+                                              fontSize: 12.sp,
                                               fontWeight: FontWeight.w200),
                                         ))
                                   ],
@@ -177,63 +177,6 @@ class _UserProfile extends State<UserProfile> {
                   ),
                 ),
                 SizedBox(height: 20.0),
-
-                //? Device Info
-                Container(
-                  height: 8.h,
-                  decoration:
-                      BoxDecoration(color: Color.fromRGBO(35, 35, 54, 1)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Iconsax.tag_right,
-                              color: Color.fromRGBO(228, 228, 240, 1),
-                              size: 19.sp,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 12.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Device No.',
-                                      style: GoogleFonts.workSans(
-                                        textStyle: TextStyle(
-                                            color: Color.fromRGBO(
-                                                242, 242, 250, 1),
-                                            fontSize: 13.sp,
-                                            fontWeight: FontWeight.normal),
-                                      )),
-                                  Text('023482427187128',
-                                      style: GoogleFonts.workSans(
-                                        textStyle: TextStyle(
-                                            color: Color.fromRGBO(
-                                                242, 242, 250, 1),
-                                            fontSize: 13.sp,
-                                            fontWeight: FontWeight.w200),
-                                      ))
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Text('Online',
-                            style: GoogleFonts.workSans(
-                              textStyle: TextStyle(
-                                color: Color.fromRGBO(120, 120, 250, 1),
-                                fontSize: 13.sp,
-                              ),
-                            ))
-                      ],
-                    ),
-                  ),
-                ),
               ],
             ),
             SizedBox(height: 10.0),
@@ -264,7 +207,7 @@ class _UserProfile extends State<UserProfile> {
                                       textStyle: TextStyle(
                                           color:
                                               Color.fromRGBO(242, 242, 250, 1),
-                                          fontSize: 16.sp,
+                                          fontSize: 15.sp,
                                           fontWeight: FontWeight.w300),
                                     )),
                               )
@@ -307,7 +250,7 @@ class _UserProfile extends State<UserProfile> {
                                         textStyle: TextStyle(
                                             color: Color.fromRGBO(
                                                 242, 242, 250, 1),
-                                            fontSize: 16.sp,
+                                            fontSize: 15.sp,
                                             fontWeight: FontWeight.w300),
                                       )),
                                 )
@@ -351,7 +294,7 @@ class _UserProfile extends State<UserProfile> {
                                         textStyle: TextStyle(
                                             color: Color.fromRGBO(
                                                 242, 242, 250, 1),
-                                            fontSize: 16.sp,
+                                            fontSize: 15.sp,
                                             fontWeight: FontWeight.w300),
                                       )),
                                 )

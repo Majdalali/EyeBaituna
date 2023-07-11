@@ -3,12 +3,13 @@ import 'package:eyebaituna_app/user_preferences/user_preferences.dart';
 import 'package:get/get.dart';
 
 class InAppUser extends GetxController {
-  final Rx<User> _inAppUser = User(0, '', '', '').obs;
+  final Rx<User> _inAppUser =
+      User(id: 0, username: '', email: '', password: '').obs;
 
   User get user => _inAppUser.value;
 
   getUserInfo() async {
-    User? getUserInfoLocalStorge = await RememberUser.readUserInfo();
-    _inAppUser.value = getUserInfoLocalStorge!;
+    User? getUserInfoLocalStorage = await RememberUser.readUserInfo();
+    _inAppUser.value = getUserInfoLocalStorage!;
   }
 }
